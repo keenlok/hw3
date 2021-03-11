@@ -4,7 +4,8 @@ import math
 def calculate_weight(freq):
     if freq == 0:
         return 0
-    return 1 + math.log(freq, 10)
+    weight = 1 + math.log(freq, 10)
+    return round(weight, 5)
 
 
 def calculate_idf(N_total_docs, doc_freq):
