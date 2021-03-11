@@ -16,15 +16,14 @@ def convert_line_to_posting_list(line):
 
     return new_pl
 
-def convert_file_to_dict(dict_file, postings_file):
+def convert_file_to_dict(dict_file):
     dictionary = {}
-    with open(file, 'r') as f:
+    with open(dict_file, 'r') as f:
         while True:
             line = f.readline()
             if not line:
                 break
             term, doc_freq, start, end = line.split(" ")
-
             dictionary[term] = [int(doc_freq), int(start), int(end)]
 
     return dictionary
