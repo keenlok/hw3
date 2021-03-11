@@ -3,6 +3,7 @@ import re
 import nltk
 import sys
 import getopt
+import utils
 
 def usage():
     print("usage: " + sys.argv[0] + " -d dictionary-file -p postings-file -q file-of-queries -o output-file-of-results")
@@ -13,8 +14,37 @@ def run_search(dict_file, postings_file, queries_file, results_file):
     perform searching on the given queries file and output the results to a file
     """
     print('running search on the queries...')
-    # This is an empty method
-    # Pls implement your code in below
+    searcher = search_engine(dict_file, postings_file)
+    searcher.search()
+
+
+class search_engine:
+    def __init__(self, dict_file, posting_file):
+        self.dict = utils.convert_file_to_dict(dict_file)
+        self.dict_file = dict_file
+        self.posting_file = posting_file
+        self.f = open(self.posting_file, 'r')
+
+    def search(self):
+        print(self.get_posting("in"))
+
+
+    def get_posting(self, term):
+        """
+        given a term in the dictionary,
+        using its pointers to retrieve its postings list
+        """
+
+        if term not in self.dict.keys():
+            return []
+
+        # read in posting list
+        self.f.seek(int(self.dict[term][1]))
+        posting = self.f.read(int(self.dict[term][2]) - int(self.dict[term][1]))
+        posting = utils.convert_line_to_posting_list(posting)
+
+        return posting
+
 
 dictionary_file = postings_file = file_of_queries = output_file_of_results = None
 
