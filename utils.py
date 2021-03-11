@@ -8,6 +8,14 @@ def calculate_weight(freq):
     return round(weight, 5)
 
 
+def convert_line_to_posting_list(line):
+    new_pl = []
+    for token in line.split(" "):
+        docID, weight = token.split(",")
+        new_pl.append([docID, float(weight)])
+
+    return new_pl
+
 def calculate_idf(N_total_docs, doc_freq):
     return math.log(N_total_docs / (doc_freq * 1.0), 10)
 
