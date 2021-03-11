@@ -4,6 +4,7 @@ import nltk
 import sys
 import getopt
 import os
+from utils import calculate_weight
 
 def usage():
     print("usage: " + sys.argv[0] + " -i directory-of-documents -d dictionary-file -p postings-file")
@@ -25,14 +26,17 @@ class indexing:
         self.dict_file = dictionary
         self.posting_file = posting
         self.dictionary = {}
-
+        self.all_docID = os.listdir(in_dir)
 
     def perform_indexing(self):
-
+        loop_count = 0
         for filename in self.all_docID:
             count = self.count_doc(os.path.join(self.dir, filename))
             self.merge_dic(filename, count)
-            break
+            if loop_count == 5:
+                break
+            else:
+                loop_count += 1
 
     def count_doc(self, file_path):
         punctuation = ['.', ',', ':', "'", '!', '?', "&", ";", ">", "<", "`", "'", "/", "+", "[", "]"]
@@ -51,7 +55,22 @@ class indexing:
         return count
 
     def merge_dic(self, docID, dict):
+        """
+        Merge Dictionaries derived from files into the index.
+        """
+        for term in dict.keys():
+            weight = calculate_weight(dict[term])
+            if term in self.dict.keys():
+                self.dict[term].append([docID, weight])
+            else:
+                self.dict[term] = [[docID, weight]]
 
+        for term in self.dict.keys():
+            unsorted = self.dict[term]
+            self.dict[term] = sorted(unsorted, key=lambda x: int(x[0]))
+
+        del dict
+        # print(self.dict)
         return
 
 
