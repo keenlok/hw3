@@ -37,6 +37,8 @@ class indexing:
                 break
             else:
                 loop_count += 1
+                
+        self.write()
 
     def count_doc(self, file_path):
         punctuation = ['.', ',', ':', "'", '!', '?', "&", ";", ">", "<", "`", "'", "/", "+", "[", "]"]
@@ -72,6 +74,21 @@ class indexing:
         del dict
         # print(self.dict)
         return
+    
+    def write(self):
+        d = open(self.dict_file, 'w')
+        p = open(self.posting_file, 'w')
+
+        for term in self.dict.keys():
+
+            posting = ["{},{}".format(pair[0], pair[1]) for pair in self.dict[term]]
+            p_start = p.tell()
+            d.write(term + ' ' + str(len(self.dict[term])) + ' ' + str(p.tell()))
+            p.write(' '.join(posting) + '\n')
+            d.write(f' {p.tell() - p_start}\n')
+
+        d.close()
+        p.close()
 
 
 input_directory = output_file_dictionary = output_file_postings = None
