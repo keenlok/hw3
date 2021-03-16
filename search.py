@@ -33,15 +33,15 @@ def run_search(dict_file, postings_file, queries_file, results_file):
 
 class search_engine:
     def __init__(self, dict_file, posting_file):
-        self.dict = utils.convert_file_to_dict(dict_file)
+        self.dict, self.docNum = utils.convert_file_to_dict(dict_file)
         self.dict_file = dict_file
         self.posting_file = posting_file
         self.f = open(self.posting_file, 'r')
 
         self.lengths = {}  # TODO!!!
-        self.total_num_docs = 0  # TODO!!!
 
     def search(self, query):
+        print(self.docNum)
         print(self.get_posting("in"))
         return self.calculate_ln_ltc(query)
 
@@ -56,7 +56,7 @@ class search_engine:
 
         # read in posting list
         self.f.seek(int(self.dict[term][1]))
-        posting = self.f.read(int(self.dict[term][2]) - int(self.dict[term][1]))
+        posting = self.f.read(int(self.dict[term][2]))
         posting = utils.convert_line_to_posting_list(posting)
 
         return posting
@@ -66,7 +66,7 @@ class search_engine:
         return query term weight as idf? based on ln-ltc example
         """
         if term in self.dict.keys():
-            N = self.total_num_docs
+            N = self.docNum
             return utils.calculate_idf(N, self.dict[term][0])
         else:
             return 0

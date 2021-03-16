@@ -83,8 +83,9 @@ class indexing:
         d = open(self.dict_file, 'w')
         p = open(self.posting_file, 'w')
 
-        for term in self.dict.keys():
+        d.write(str(len(self.all_docID)) + '\n')
 
+        for term in self.dict.keys():
             posting = ["{},{}".format(pair[0], pair[1]) for pair in self.dict[term]]
             p_start = p.tell()
             d.write(term + ' ' + str(len(self.dict[term])) + ' ' + str(p.tell()))
