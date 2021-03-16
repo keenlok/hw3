@@ -38,8 +38,8 @@ class search_engine:
         self.posting_file = posting_file
         self.f = open(self.posting_file, 'r')
 
-        self.lengths = {} #TODO!!!
-        self.total_num_docs = 0 #TODO!!!
+        self.lengths = {}  # TODO!!!
+        self.total_num_docs = 0  # TODO!!!
 
     def search(self, query):
         print(self.get_posting("in"))
