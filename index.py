@@ -5,7 +5,7 @@ import nltk
 import sys
 import getopt
 import os
-from utils import calculate_weight
+from utils import calculate_weight, length_file, DEBUG
 
 def usage():
     print("usage: " + sys.argv[0] + " -i directory-of-documents -d dictionary-file -p postings-file")
@@ -26,20 +26,25 @@ class indexing:
         self.dir = in_dir
         self.dict_file = dictionary
         self.posting_file = posting
+        self.length_file = length_file
         self.dictionary = {}
+        self.lengths = {}
         self.all_docID = os.listdir(in_dir)
 
     def perform_indexing(self):
         loop_count = 0
-        lengths = {}  # TODO: where to write this dictionary?
-        for filename in self.all_docID:
+        lengths = {}
+        for filename in sorted(self.all_docID, key=lambda x: int(x)):  # will change back
             count = self.count_doc(os.path.join(self.dir, filename))
             lengths[filename] = self.merge_dic(filename, count)
-            if loop_count == 5:
-                break
-            else:
-                loop_count += 1
-                
+            print(filename)
+            if DEBUG:
+                if loop_count == 5:
+                    break
+                else:
+                    loop_count += 1
+
+        self.lengths = lengths
         self.write()
 
     def count_doc(self, file_path):
@@ -94,6 +99,14 @@ class indexing:
 
         d.close()
         p.close()
+
+        l = open(self.length_file, 'w')
+        string_to_write = ''
+        for docId in sorted(self.lengths.keys(), key=lambda x: int(x)):
+            string_to_write += docId + ',' + str(self.lengths[docId]) + ' '
+        string_to_write = string_to_write[:-1]
+        l.write(string_to_write)
+        l.close()
 
 
 input_directory = output_file_dictionary = output_file_postings = None

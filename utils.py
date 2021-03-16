@@ -1,5 +1,8 @@
 import math
 
+DEBUG = False
+length_file = "length.txt"
+
 
 def calculate_weight(freq):
     if freq == 0:
@@ -29,6 +32,18 @@ def convert_file_to_dict(dict_file):
             dictionary[term] = [int(doc_freq), int(start), int(end)]
 
     return dictionary, docNum
+
+
+def convert_file_to_lengths(length_file):
+    lengths = {}
+    with open(length_file, 'r') as f:
+        docID_length_arr = f.readline().split(" ")
+        for docID_length in docID_length_arr:
+            docID, length = docID_length.split(",")
+            lengths[docID] = float(length)
+
+    # print(lengths)
+    return lengths
 
 
 def calculate_idf(N_total_docs, doc_freq):
