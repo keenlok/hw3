@@ -42,8 +42,8 @@ class search_engine:
         self.lengths = utils.convert_file_to_lengths(utils.length_file)
 
     def search(self, query):
-        print(self.docNum)
-        print(self.get_posting("in"))
+        # print(self.docNum)
+        # print(self.get_posting("in"))
         return self.calculate_ln_ltc(query)
 
     def get_posting(self, term):
@@ -62,25 +62,27 @@ class search_engine:
 
         return posting
 
-    def calculate_query_weight(self, term):
+    def calculate_query_weight(self, term, freq):
         """
         return query term weight as idf? based on ln-ltc example
         """
         if term in self.dict.keys():
             N = self.docNum
-            return utils.calculate_idf(N, self.dict[term][0])
+            wt = utils.calculate_weight(freq)
+            idf = utils.calculate_idf(N, self.dict[term][0])
+            return wt * idf
         else:
             return 0
 
     def calculate_ln_ltc(self, query):
         """
         get the documents with the top 10 scores
-
         """
         scores = {}
-        query_terms = query.split(" ")
-        for term in query_terms:
-            weight = self.calculate_query_weight(term)
+        query_terms_freq = utils.preprocess(query)
+        print(query_terms_freq)
+        for term, freq in query_terms_freq.items():
+            weight = self.calculate_query_weight(term, freq)
             posting_list = self.get_posting(term)
             for docID, term_weight in posting_list:
                 product = weight * term_weight

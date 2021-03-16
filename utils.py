@@ -1,8 +1,27 @@
 import math
 
+import nltk
+import re
+
+
 DEBUG = False
 length_file = "length.txt"
+punctuation = ['.', ',', ':', "'", '!', '?', "&", ";", ">", "<", "`", "'", "/", "+", "[", "]"]
 
+
+def preprocess(string):
+    tokens = [nltk.word_tokenize(sent) for sent in nltk.sent_tokenize(string)]
+    tokens = [nltk.PorterStemmer().stem(re.sub(r'[./\-!?^+&%$#()=*:`,"\']', '', word.lower())) for sent in
+              tokens for word in sent if word not in punctuation and not word.isdigit()]
+
+    count = {}
+    for token in tokens:
+        if token not in count.keys():
+            count[token] = 1
+        else:
+            count[token] += 1
+
+    return count
 
 def calculate_weight(freq):
     if freq == 0:

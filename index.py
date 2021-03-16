@@ -5,7 +5,7 @@ import nltk
 import sys
 import getopt
 import os
-from utils import calculate_weight, length_file, DEBUG
+from utils import calculate_weight, length_file, DEBUG, punctuation
 
 def usage():
     print("usage: " + sys.argv[0] + " -i directory-of-documents -d dictionary-file -p postings-file")
@@ -48,7 +48,6 @@ class indexing:
         self.write()
 
     def count_doc(self, file_path):
-        punctuation = ['.', ',', ':', "'", '!', '?', "&", ";", ">", "<", "`", "'", "/", "+", "[", "]"]
         f = open(file_path, 'r')
         tokens = [nltk.word_tokenize(sent) for sent in nltk.sent_tokenize(f.read())]
         tokens = [nltk.PorterStemmer().stem(re.sub(r'[./\-!?^+&%$#()=*:`,"\']', '', word.lower())) for sent in
