@@ -19,6 +19,7 @@ def convert_line_to_posting_list(line):
 def convert_file_to_dict(dict_file):
     dictionary = {}
     with open(dict_file, 'r') as f:
+        docNum = int(f.readline())
         while True:
             line = f.readline()
             if not line:
@@ -26,7 +27,7 @@ def convert_file_to_dict(dict_file):
             term, doc_freq, start, end = line.split(" ")
             dictionary[term] = [int(doc_freq), int(start), int(end)]
 
-    return dictionary
+    return dictionary, docNum
 
 
 def calculate_idf(N_total_docs, doc_freq):
