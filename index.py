@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+import math
 import re
 import nltk
 import sys
@@ -30,9 +31,10 @@ class indexing:
 
     def perform_indexing(self):
         loop_count = 0
+        lengths = {}  # TODO: where to write this dictionary?
         for filename in self.all_docID:
             count = self.count_doc(os.path.join(self.dir, filename))
-            self.merge_dic(filename, count)
+            lengths[filename] = self.merge_dic(filename, count)
             if loop_count == 5:
                 break
             else:
@@ -60,8 +62,10 @@ class indexing:
         """
         Merge Dictionaries derived from files into the index.
         """
+        length = 0
         for term in dict.keys():
             weight = calculate_weight(dict[term])
+            length += pow(weight, 2)
             if term in self.dict.keys():
                 self.dict[term].append([docID, weight])
             else:
@@ -73,7 +77,7 @@ class indexing:
 
         del dict
         # print(self.dict)
-        return
+        return math.sqrt(length)  # return length of document
     
     def write(self):
         d = open(self.dict_file, 'w')

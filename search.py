@@ -5,8 +5,10 @@ import sys
 import getopt
 import utils
 
+
 def usage():
     print("usage: " + sys.argv[0] + " -d dictionary-file -p postings-file -q file-of-queries -o output-file-of-results")
+
 
 def run_search(dict_file, postings_file, queries_file, results_file):
     """
@@ -15,7 +17,18 @@ def run_search(dict_file, postings_file, queries_file, results_file):
     """
     print('running search on the queries...')
     searcher = search_engine(dict_file, postings_file)
-    searcher.search()
+    with open(queries_file, "r") as f:
+        output = ""
+        while True:
+            query = f.readline()
+            if len(query) == 0:
+                break
+            result = searcher.search(query)
+            output += utils.format_result_list(result)
+
+    # write results
+    with open(results_file, "w") as f:
+        f.write(output)
 
 
 class search_engine:
@@ -25,9 +38,12 @@ class search_engine:
         self.posting_file = posting_file
         self.f = open(self.posting_file, 'r')
 
-    def search(self):
-        print(self.get_posting("in"))
+        self.lengths = {} #TODO!!!
+        self.total_num_docs = 0 #TODO!!!
 
+    def search(self, query):
+        print(self.get_posting("in"))
+        return self.calculate_ln_ltc(query)
 
     def get_posting(self, term):
         """
@@ -44,6 +60,40 @@ class search_engine:
         posting = utils.convert_line_to_posting_list(posting)
 
         return posting
+
+    def calculate_query_weight(self, term):
+        """
+        return query term weight as idf? based on ln-ltc example
+        """
+        if term in self.dict.keys():
+            N = self.total_num_docs
+            return utils.calculate_idf(N, self.dict[term][0])
+        else:
+            return 0
+
+    def calculate_ln_ltc(self, query):
+        """
+        get the documents with the top 10 scores
+
+        """
+        scores = {}
+        query_terms = query.split(" ")
+        for term in query_terms:
+            weight = self.calculate_query_weight(term)
+            posting_list = self.get_posting(term)
+            for docID, term_weight in posting_list:
+                product = weight * term_weight
+                if docID in scores.keys():
+                    scores[docID] += product
+                else:
+                    scores[docID] = product
+
+        # get length TODO: decide whether to use integers or strings for docID!!
+        for docID in scores.keys():
+            scores[docID] = scores[docID] / self.lengths[docID]
+
+        sorted_scores = sorted(scores.keys(), key=lambda x: scores[x])
+        return sorted_scores[:10]  # return the 10 highest scoring items
 
 
 dictionary_file = postings_file = file_of_queries = output_file_of_results = None

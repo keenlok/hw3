@@ -16,6 +16,7 @@ def convert_line_to_posting_list(line):
 
     return new_pl
 
+
 def convert_file_to_dict(dict_file):
     dictionary = {}
     with open(dict_file, 'r') as f:
@@ -33,17 +34,17 @@ def calculate_idf(N_total_docs, doc_freq):
     return math.log(N_total_docs / (doc_freq * 1.0), 10)
 
 
-def calculate_ln_ltc(query, dictionary):
-    pass
+def format_result_list(results):
+    output = ""
+    for i in range(len(results)):
+        output += str(results[i])
+        if i != len(results) - 1:
+            output += " "
+    output += "\n"
+    return output
 
+# line = "797,1.47712 1069,1.30103 9036,1.60206 9204,1.47712 13089,1.47712"
+# print(convert_line_to_posting_list(line))
 
-def cosine_score(query, dictionary):
-    """
-    get the documents with the top 10 scores
-    """
-    scores = []
-    # get length
-    pass
-
-
-
+# dic = convert_file_to_dict("dictionary.txt")
+# print(dic)
