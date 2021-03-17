@@ -5,7 +5,7 @@ import nltk
 import sys
 import getopt
 import os
-from utils import calculate_weight, length_file, DEBUG, punctuation
+from utils import calculate_weight, length_file, DEBUG, punctuation, preprocess, count_term
 
 def usage():
     print("usage: " + sys.argv[0] + " -i directory-of-documents -d dictionary-file -p postings-file")
@@ -33,55 +33,48 @@ class indexing:
 
     def perform_indexing(self):
         loop_count = 0
-        lengths = {}
+        pairs = []
         for filename in sorted(self.all_docID, key=lambda x: int(x)):  # will change back
-            count = self.count_doc(os.path.join(self.dir, filename))
-            lengths[filename] = self.merge_dic(filename, count)
-            print(filename)
+            pairs += self.count_doc(os.path.join(self.dir, filename))
             if DEBUG:
                 if loop_count == 5:
                     break
-                else:
-                    loop_count += 1
-
-        self.lengths = lengths
+            loop_count += 1
+            if loop_count % 1000 == 0: print(loop_count)
+        self.build_dic(pairs)
         self.write()
 
     def count_doc(self, file_path):
         f = open(file_path, 'r')
-        tokens = [nltk.word_tokenize(sent) for sent in nltk.sent_tokenize(f.read())]
-        tokens = [nltk.PorterStemmer().stem(re.sub(r'[./\-!?^+&%$#()=*:`,"\']', '', word.lower())) for sent in
-                  tokens for word in sent if word not in punctuation and not word.isdigit()]
+        lines = f.readlines()
+        tokens = []
+        for line in lines:
+            tokens += preprocess(line)
+        count = count_term(tokens)
 
-        count = {}
-        for token in tokens:
-            if token not in count.keys():
-                count[token] = 1
-            else:
-                count[token] += 1
+        pairs = []
+        docID = file_path.split('/')[-1]
+        self.lengths[docID] = 0
+        for term in count.keys():
+            weight = calculate_weight(count[term])
+            pairs.append([term, docID, weight])
+            self.lengths[docID] += pow(weight, 2)
+        self.lengths[docID] = math.sqrt(self.lengths[docID])
 
-        return count
+        return pairs
 
-    def merge_dic(self, docID, dict):
-        """
-        Merge Dictionaries derived from files into the index.
-        """
-        length = 0
-        for term in dict.keys():
-            weight = calculate_weight(dict[term])
-            length += pow(weight, 2)
+    def build_dic(self, pairs):
+        for pair in pairs:
+            term = pair[0]
+            value = pair[1:]
             if term in self.dict.keys():
-                self.dict[term].append([docID, weight])
+                self.dict[term].append(value)
             else:
-                self.dict[term] = [[docID, weight]]
+                self.dict[term] = [value]
 
         for term in self.dict.keys():
             unsorted = self.dict[term]
             self.dict[term] = sorted(unsorted, key=lambda x: int(x[0]))
-
-        del dict
-        # print(self.dict)
-        return math.sqrt(length)  # return length of document
     
     def write(self):
         d = open(self.dict_file, 'w')

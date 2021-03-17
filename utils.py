@@ -6,21 +6,24 @@ import re
 
 DEBUG = False
 length_file = "length.txt"
-punctuation = ['.', ',', ':', "'", '!', '?', "&", ";", ">", "<", "`", "'", "/", "+", "[", "]"]
+punctuation = ['.', ',', ':', "'", '!', '?', "&", ";", ">", "<", "`", "'", "/", "+", "[", "]", '']
 
 
 def preprocess(string):
     tokens = [nltk.word_tokenize(sent) for sent in nltk.sent_tokenize(string)]
     tokens = [nltk.PorterStemmer().stem(re.sub(r'[./\-!?^+&%$#()=*:`,"\']', '', word.lower())) for sent in
               tokens for word in sent if word not in punctuation and not word.isdigit()]
+    tokens = [token for token in tokens if token not in punctuation]
+    return tokens
 
+
+def count_term(tokens):
     count = {}
     for token in tokens:
         if token not in count.keys():
             count[token] = 1
         else:
             count[token] += 1
-
     return count
 
 
@@ -28,7 +31,8 @@ def calculate_weight(freq):
     if freq == 0:
         return 0
     weight = 1 + math.log(freq, 10)
-    return round(weight, 5)
+    #return round(weight, 5)
+    return weight
 
 
 def convert_line_to_posting_list(line):
