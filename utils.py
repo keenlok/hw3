@@ -23,6 +23,7 @@ def preprocess(string):
 
     return count
 
+
 def calculate_weight(freq):
     if freq == 0:
         return 0

@@ -95,7 +95,7 @@ class search_engine:
         for docID in scores.keys():
             scores[docID] = scores[docID] / self.lengths[docID]
 
-        sorted_scores = sorted(scores.keys(), key=lambda x: scores[x])
+        sorted_scores = sorted(scores.keys(), key=lambda x: scores[x], reverse=True)
         return sorted_scores[:10]  # return the 10 highest scoring items
 
 
