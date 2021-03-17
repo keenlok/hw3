@@ -79,9 +79,11 @@ class search_engine:
         get the documents with the top 10 scores
         """
         scores = {}
-        query_terms_freq = utils.preprocess(query)
+        query_terms_freq = utils.preprocess(query[:-1])
         print(query_terms_freq)
         for term, freq in query_terms_freq.items():
+            if term == '':
+                continue
             weight = self.calculate_query_weight(term, freq)
             posting_list = self.get_posting(term)
             for docID, term_weight in posting_list:
