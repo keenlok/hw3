@@ -80,6 +80,7 @@ class search_engine:
         """
         scores = {}
         query_terms_freq = utils.preprocess(query)
+        query_terms_freq = utils.count_term(query_terms_freq)
         print(query_terms_freq)
         for term, freq in query_terms_freq.items():
             weight = self.calculate_query_weight(term, freq)
