@@ -79,9 +79,9 @@ class search_engine:
         get the documents with the top 10 scores
         """
         scores = {}
-        query_terms_freq = utils.preprocess(query)
+        query_terms_freq = utils.free_text_preprocess(query)
         query_terms_freq = utils.count_term(query_terms_freq)
-        print(query_terms_freq)
+        #print(query_terms_freq)
         for term, freq in query_terms_freq.items():
             if term == '':
                 continue

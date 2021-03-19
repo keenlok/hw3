@@ -5,7 +5,7 @@ import nltk
 import sys
 import getopt
 import os
-from utils import calculate_weight, length_file, DEBUG, punctuation, preprocess, count_term
+from utils import calculate_weight, length_file, DEBUG, preprocess, count_term
 
 def usage():
     print("usage: " + sys.argv[0] + " -i directory-of-documents -d dictionary-file -p postings-file")
@@ -32,6 +32,10 @@ class indexing:
         self.all_docID = os.listdir(in_dir)
 
     def perform_indexing(self):
+        """
+        indexing the given corpus, build the dictionary and postings lists
+        and write them into the disk
+        """
         loop_count = 0
         pairs = []
         for filename in sorted(self.all_docID, key=lambda x: int(x)):  # will change back
@@ -45,6 +49,14 @@ class indexing:
         self.write()
 
     def count_doc(self, file_path):
+        """
+        count the term frequency of every term in the given document
+        use the term frequency to calculate the weight(tf)
+        store the result as pair(term, docID, weight)
+        calculate the length of document vector
+        return all the pairs
+        """
+
         f = open(file_path, 'r')
         lines = f.readlines()
         tokens = []
@@ -64,6 +76,11 @@ class indexing:
         return pairs
 
     def build_dic(self, pairs):
+        """
+        call count_doc() to count term frequency for every document
+        collect all the return pairs and build the dictionary
+        """
+
         for pair in pairs:
             term = pair[0]
             value = pair[1:]
@@ -77,6 +94,11 @@ class indexing:
             self.dict[term] = sorted(unsorted, key=lambda x: int(x[0]))
     
     def write(self):
+        """
+        write the length, dictionary and posting lists file into the disk
+        in dictionary file, store the pointer of posting list
+        """
+
         d = open(self.dict_file, 'w')
         p = open(self.posting_file, 'w')
 
