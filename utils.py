@@ -1,19 +1,39 @@
 import math
-
+import string
 import nltk
 import re
 
 
 DEBUG = False
+# length_file = "length_old.txt"
 length_file = "length.txt"
 punctuation = ['.', ',', ':', "'", '!', '?', "&", ";", ">", "<", "`", "'", "/", "+", "[", "]", '']
+STEMMER = nltk.PorterStemmer()
 
 
-def preprocess(string):
-    tokens = [nltk.word_tokenize(sent) for sent in nltk.sent_tokenize(string)]
-    tokens = [nltk.PorterStemmer().stem(re.sub(r'[./\-!?^+&%$#()=*:`,"\']', '', word.lower())) for sent in
-              tokens for word in sent if word not in punctuation and not word.isdigit()]
+def preprocess(str):
+    tokens = [nltk.word_tokenize(sent) for sent in nltk.sent_tokenize(str)]
+    # tokens = [nltk.PorterStemmer().stem(re.sub(r'[./\-!?^+&%$#()=*:`,"\']', '', word.lower())) for sent in
+    tokens = [nltk.PorterStemmer().stem(re.sub(r'[./\!?^+&%$#()=*:`,"\']', '', word.lower())) for sent in
+    # tokens = [nltk.PorterStemmer().stem(word.lower()) for sent in
+              # tokens for word in sent if word not in punctuation and not word.isdigit()]
+              tokens for word in sent if word not in string.punctuation and not word.isdigit()]
     tokens = [token for token in tokens if token not in punctuation]
+
+    tokens = []
+    for sentence in nltk.sent_tokenize(str):
+        for word in nltk.word_tokenize(sentence):
+            if all(char in string.punctuation for char in word):
+                # print("all punct words found", word)
+                continue
+            if any(char in string.punctuation for char in word):
+                # not normalizing...
+                pass
+            if word.isdigit():
+                continue
+            stemmed = STEMMER.stem(word).lower()
+            tokens.append(stemmed)
+
     return tokens
 
 

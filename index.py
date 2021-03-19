@@ -54,12 +54,12 @@ class indexing:
 
         pairs = []
         docID = file_path.split('/')[-1]
-        self.lengths[docID] = 0
+        length = 0
         for term in count.keys():
             weight = calculate_weight(count[term])
             pairs.append([term, docID, weight])
-            self.lengths[docID] += pow(weight, 2)
-        self.lengths[docID] = math.sqrt(self.lengths[docID])
+            length += pow(weight, 2)
+        self.lengths[docID] = math.sqrt(length)
 
         return pairs
 
