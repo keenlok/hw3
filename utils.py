@@ -10,10 +10,13 @@ punctuation = ['.', ',', ':', "'", '!', '?', "&", ";", ">", "<", "`", "'", "/", 
 
 
 def preprocess(string):
-    tokens = [nltk.word_tokenize(sent) for sent in nltk.sent_tokenize(string)]
+    '''tokens = [nltk.word_tokenize(sent) for sent in nltk.sent_tokenize(string)]
     tokens = [nltk.PorterStemmer().stem(re.sub(r'[./\-!?^+&%$#()=*:`,"\']', '', word.lower())) for sent in
-              tokens for word in sent if word not in punctuation and not word.isdigit()]
-    tokens = [token for token in tokens if token not in punctuation]
+              tokens for word in sent if word not in punctuation]
+    tokens = [token for token in tokens if token not in punctuation]'''
+    tokens = string.replace('\n', '').split(' ')
+    tokens = [nltk.PorterStemmer().stem(re.sub(r'[./\-!?^+&%$#()=*:`,"\']', '', token.lower())) for token in tokens if token not in punctuation]
+
     return tokens
 
 def count_term(tokens):
