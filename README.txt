@@ -1,4 +1,5 @@
-This is the README file for A0000000X-A0173238A's submission
+This is the README file for A0230183R-A0173238A's submission
+e0691799@u.nus.edu
 
 == Python Version ==
 
@@ -53,7 +54,7 @@ The text file containing the answers to the discussion questions.
 
 Please put a "x" (without the double quotes) into the bracket of the appropriate statement.
 
-[x] We, A0000000X-A0173238A, certify that I/we have followed the CS 3245 Information
+[x] We, A0230183R-A0173238A, certify that I/we have followed the CS 3245 Information
 Retrieval class guidelines for homework assignments.  In particular, I/we
 expressly vow that I/we have followed the Facebook rule in discussing
 with others in doing the assignment and did not take notes (digital or
@@ -72,3 +73,6 @@ We suggest that we should be graded as follows:
 
 <Please list any websites and/or people you consulted with for this
 assignment and state their role>
+
+https://piazza.com/class/kjmny91pkrx6ag?cid=169
+https://piazza.com/class/kjmny91pkrx6ag?cid=172

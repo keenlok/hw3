@@ -1,16 +1,19 @@
 import math
 import string
 import nltk
-import re
 
 
 DEBUG = False
-# length_file = "length_old.txt"
 length_file = "length.txt"
 STEMMER = nltk.PorterStemmer()
 
 
 def preprocess(str):
+    """
+    preprocess for documents
+    use nltk.tokenizer to implement tokenization
+    tokenize, remove useless punctuation, keep numbers, stem and case-folding
+    """
     tokens = []
     for word in nltk.word_tokenize(str):
         if all(char in string.punctuation for char in word):
@@ -24,6 +27,12 @@ def preprocess(str):
     return tokens
 
 def free_text_preprocess(str):
+    """
+    preprocess for query
+    use split(' ') to implement tokenization
+    tokenize, remove useless punctuation, keep numbers, stem and case-folding
+    """
+
     tokens = []
     for word in str.replace('\n', '').split(' '):
         if all(char in string.punctuation for char in word):
@@ -38,6 +47,9 @@ def free_text_preprocess(str):
 
 
 def count_term(tokens):
+    """
+    count the term frequency for a given term
+    """
     count = {}
     for token in tokens:
         if token not in count.keys():
@@ -48,6 +60,10 @@ def count_term(tokens):
 
 
 def calculate_weight(freq):
+    """
+    calculate the tf weight for the term
+    """
+
     if freq == 0:
         return 0
     weight = 1 + math.log(freq, 10)
@@ -100,9 +116,3 @@ def format_result_list(results):
             output += " "
     output += "\n"
     return output
-
-# line = "797,1.47712 1069,1.30103 9036,1.60206 9204,1.47712 13089,1.47712"
-# print(convert_line_to_posting_list(line))
-
-# dic = convert_file_to_dict("dictionary.txt")
-# print(dic)
