@@ -55,6 +55,10 @@ def calculate_weight(freq):
 
 
 def convert_line_to_posting_list(line):
+    """
+    Converts the string form of the posting lists into a proper posting list.
+    Returns the converted posting list.
+    """
     new_pl = []
     for token in line.split(" "):
         docID, weight = token.split(",")
@@ -64,6 +68,10 @@ def convert_line_to_posting_list(line):
 
 
 def convert_file_to_dict(dict_file):
+    """
+    Reads the dictionary file and returns the parsed dictionary of terms as well as the
+    total number of documents as docNum
+    """
     dictionary = {}
     with open(dict_file, 'r') as f:
         docNum = int(f.readline())
@@ -78,6 +86,9 @@ def convert_file_to_dict(dict_file):
 
 
 def convert_file_to_lengths(length_file):
+    """
+    Reads length file and formats it into a length array to be returned.
+    """
     lengths = {}
     with open(length_file, 'r') as f:
         docID_length_arr = f.readline().split(" ")
@@ -89,10 +100,16 @@ def convert_file_to_lengths(length_file):
 
 
 def calculate_idf(N_total_docs, doc_freq):
+    """
+    Calculates idf
+    """
     return math.log(N_total_docs / (doc_freq * 1.0), 10)
 
 
 def format_result_list(results):
+    """
+    Format search results from list to a space-separated string
+    """
     output = ""
     for i in range(len(results)):
         output += str(results[i])
@@ -100,9 +117,3 @@ def format_result_list(results):
             output += " "
     output += "\n"
     return output
-
-# line = "797,1.47712 1069,1.30103 9036,1.60206 9204,1.47712 13089,1.47712"
-# print(convert_line_to_posting_list(line))
-
-# dic = convert_file_to_dict("dictionary.txt")
-# print(dic)
