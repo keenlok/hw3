@@ -1,0 +1,57 @@
+1. In this assignment, we didn't ask you to support phrasal queries, which is a feature that is typically supported
+in web search engines. Describe how you would support phrasal search in conjunction with the VSM model.
+A sketch of the algorithm is sufficient. (For those of you who like a challenge, please go ahead and implement this
+feature in your submission but clearly demarcate it in your code and allow this feature to be turned on or off using
+the command line switch "-x" (where "-x" means to turn on the extended processing of phrasal queries). We will give a
+small bonus to submissions that achieve this functionality correctly).
+
+In order to support phrasal queries, e.g. “NUS open day”, it’s basically implementing the query term proximity algorithm
+that was went over in the week 8 slides:
+
+(1)we can first create a positional index to store the positions of the terms in their documents.
+(2)Then we can run the query as a phrase query, using the positional index, to find documents that contain the phrase
+with positions right next to one another.
+(3)If less than k(in this assignment it’s 10?) documents were returned in the previous step, then run the 2 halves of
+the phrase as separate phrase queries. E.g. “NUS open” and “open day”
+Else go to step 5.
+(4)If there’s still less than k documents, then we will use VSM to get the required documents.
+Else, could use the intersect algorithm (or some set functions) to get the set of documents that has an intersect of the
+sets of documents returned by the separate queries of “NUS open” and “open day”
+(5)When ranking the documents, use the ln-ltc to get scores for the documents, as well as the proximity window of the
+query terms. For phrasal queries, it is better to have proximity windows that are smaller but that is not an absolute
+heuristic as explained in the lecture, but a nice one to have nonetheless.
+------------------------------------------------------------------------------------------------------------------------
+
+
+2. Describe how your search engine reacts to long documents and long queries as compared to short documents and queries.
+Is the normalization you use sufficient to address the problems (see Section 6.4.4 for a hint)? In your judgement, is the
+ltc.lnc scheme (n.b., not the ranking scheme you were asked to implement) sufficient for retrieving documents from the
+Reuters-21578 collection?
+
+Our search engine does not do anything special to long documents and queries as compared to the short documents and queries.
+Based on section 6.4.4 in the textbook, the normalization we used is not sufficient since the method we used will cause
+shorter documents to have a higher score. Longer documents will be skewed to have lower relevance.
+
+ltc.lnc: log tf and idf with cosine normalization for documents, and log tf, cosine normalization but no idf for queries.
+For each query term t do calculate Wt,q and Wt,d
+    Wt,d * Wt,q = logarithm(tf(t,d)) * logarithm(tf(t,q)) * t(idf(t, q))
+Since the t(idf(t,q)) is the same for every term and has no effect on the final ranking, it’s actually a waste of time
+to do these extra calculations.
+Although this searching schema takes into account the term frequency, it still can differentiate the common terms because
+after normalizing, the scores will be divided by the length of the document vector. It achieves a similar result as idf.
+Hence, it’s still sufficient for searching the Reuters collection.
+------------------------------------------------------------------------------------------------------------------------
+
+
+
+3. Do you think zone or field parametric indices would be useful for practical search in the Reuters collection?
+Note: the Reuters collection does have metadata for each article but the quality of the metadata is not uniform, nor
+are the metadata classifications uniformly applied (some documents have it, some don't). Hint: for the next Homework #4,
+we will be using field metadata, so if you want to base Homework #4 on your Homework #3, you're welcomed to start support
+of this early (although no extra credit will be given if it's right).
+
+I don’t think the performance of zone or field parametric indices would be ideal when searching the Reuters collection.
+The imbalance of metadata will influence the search result in accuracy if we implement zone or field parametric indices.
+For example, when searching the documents that are authored by Raffles, the search engine will only return the desired
+documents with author information in their metadata while ignoring those without metadata. Hence, it creates a bias
+towards documents that contain the metadata.
